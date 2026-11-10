@@ -1,0 +1,9 @@
+# Fotos de alumnos (datos personales de menores): no subir al repositorio
+uploads/*
+!uploads/.gitkeep
+
+# Sistema / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
