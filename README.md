@@ -10,7 +10,9 @@ Sistema en PHP + MySQL para buscar alumnos, generar e imprimir carnets escolares
 5. Abrir `http://localhost/carnet/`.
 
 ## Módulos
-- **Carnets** (`index.php`): buscar alumno, subir foto, imprimir carnet.
+- **Carnets** (`index.php`): buscar alumno, subir foto, código QR e imprimir carnet.
 - **Alumnos** (`alumnos.php`): crear, editar y eliminar alumnos.
 
 Las fotos se guardan en `uploads/` (en este repositorio solo hay fotos de ejemplo).
+
+Versión actual: ver [CHANGELOG.md](CHANGELOG.md).

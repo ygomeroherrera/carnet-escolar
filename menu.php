@@ -1,5 +1,6 @@
 <?php
 // Uso: $pagina = 'carnets'; require 'menu.php';  ... contenido ... </main></body></html>
+require_once __DIR__ . '/version.php';
 $pagina = $pagina ?? '';
 $titulo = $titulo ?? 'Sistema de Carnets';
 $items = ['carnets' => ['index.php', '🪪 Carnets'], 'alumnos' => ['alumnos.php', '🎓 Alumnos']];
@@ -18,5 +19,6 @@ $items = ['carnets' => ['index.php', '🪪 Carnets'], 'alumnos' => ['alumnos.php
   <?php foreach ($items as $clave => [$url, $texto]): ?>
     <a href="<?= $url ?>" class="<?= $clave === $pagina ? 'activo' : '' ?>"><?= $texto ?></a>
   <?php endforeach; ?>
+  <div class="version">Versión <?= APP_VERSION ?></div>
 </nav>
 <main>

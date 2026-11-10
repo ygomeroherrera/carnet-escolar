@@ -2,6 +2,13 @@
 require 'config.php';
 header('Content-Type: application/json; charset=utf-8');
 
+if (isset($_GET['id'])) {
+    $st = db()->prepare('SELECT id, dni, nombres, apellidos, nivel, grado, seccion, apoderado, foto FROM alumnos WHERE id = ?');
+    $st->execute([(int)$_GET['id']]);
+    echo json_encode($st->fetchAll(), JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
 $q = trim($_GET['q'] ?? '');
 if (mb_strlen($q) < 2) { echo '[]'; exit; }
 

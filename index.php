@@ -32,9 +32,12 @@ $extra_head = <<<'CSS'
     align-items: center; justify-content: center; font-size: 11px; color: #78909c; text-align: center; flex-shrink: 0; }
   .foto img { width: 100%; height: 100%; object-fit: cover; }
   .foto.con { border-style: solid; border-color: #1e88e5; }
-  .datos { font-size: 12px; line-height: 1.5; }
-  .datos .nombre { font-size: 14px; font-weight: bold; color: #0d47a1; margin-bottom: 4px; }
+  .datos { font-size: 11px; line-height: 1.45; min-width: 0; flex: 1; }
+  .datos .nombre { font-size: 13px; font-weight: bold; color: #0d47a1; margin-bottom: 4px; }
   .datos b { color: #455a64; }
+  .qr { width: 64px; flex-shrink: 0; text-align: center; font-size: 8px; color: #607d8b; align-self: center; }
+  .qr svg { width: 64px; height: 64px; display: block; }
+  .qr.vacio { height: 64px; border: 2px dashed #cfd8dc; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
   .pie { background: #ffca28; text-align: center; font-size: 10px; padding: 4px; font-weight: bold; }
 
   @media print {
@@ -81,11 +84,13 @@ require 'menu.php';
         <div><b>Grado:</b> <span id="c-grado">-</span> &nbsp; <b>Sección:</b> <span id="c-seccion">-</span></div>
         <div><b>Apoderado:</b> <span id="c-apoderado">-</span></div>
       </div>
+      <div class="qr vacio" id="c-qr">QR</div>
     </div>
     <div class="pie">Año escolar <span id="anio"></span></div>
   </div>
 </div>
 
+<script src="js/qrcode.js"></script>
 <script>
   const $ = id => document.getElementById(id);
   let alumnoId = null, temporizador = null;
@@ -101,6 +106,17 @@ require 'menu.php';
     else { f.textContent = 'FOTO'; f.classList.remove('con'); }
   }
 
+  // El QR contiene el DNI del alumno (o ID-n si no tiene DNI)
+  function mostrarQR(a) {
+    const caja = $('c-qr');
+    const codigo = a.dni ? String(a.dni) : 'ID-' + a.id;
+    const qr = qrcode(0, 'M');
+    qr.addData(codigo);
+    qr.make();
+    caja.className = 'qr';
+    caja.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true }) + '<div>' + esc(codigo) + '</div>';
+  }
+
   function seleccionar(a) {
     alumnoId = a.id;
     $('nombre').value = a.nombres;   $('apellido').value = a.apellidos;
@@ -110,6 +126,7 @@ require 'menu.php';
     $('c-nivel').textContent = a.nivel;  $('c-grado').textContent = a.grado;
     $('c-seccion').textContent = a.seccion;  $('c-apoderado').textContent = a.apoderado;
     mostrarFoto(a.foto);
+    mostrarQR(a);
     $('archivo').disabled = false;  $('archivo').value = '';
     $('imprimir').disabled = false;
     $('resultados').style.display = 'none';
@@ -139,6 +156,10 @@ require 'menu.php';
 
   $('buscar').addEventListener('input', () => { clearTimeout(temporizador); temporizador = setTimeout(buscar, 250); });
   document.addEventListener('click', e => { if (!e.target.closest('.buscador')) $('resultados').style.display = 'none'; });
+
+  // Abrir con ?id=N carga directamente ese alumno
+  const idUrl = new URLSearchParams(location.search).get('id');
+  if (idUrl) fetch('buscar.php?id=' + encodeURIComponent(idUrl)).then(r => r.json()).then(l => { if (l[0]) seleccionar(l[0]); });
 
   $('archivo').addEventListener('change', async function () {
     if (!this.files[0] || !alumnoId) return;
